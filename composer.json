@@ -1,0 +1,32 @@
+{
+  "name" : "los/loswifi",
+  "description" : "ZF2 module to wrapper some wifi controllers libraries",
+  "require" : {
+    "php" : ">=5.4",
+    "zendframework/zendframework" : "~2.3"
+  },
+  "require-dev" : {
+    "satooshi/php-coveralls" : "dev-master",
+    "phpunit/phpunit" : "~4.4"
+  },
+  "authors" : [ {
+    "name" : "Leandro Silva",
+    "email" : "leandro@leandrosilva.info",
+    "homepage" : "http://leandrosilva.info"
+  } ],
+  "keywords" : [ "los", "wifi", "unifi", "ubiquity" ],
+  "autoload" : {
+    "psr-0" : {
+      "LosWifi\\" : "src/"
+    },
+    "psr-4" : {
+      "LosWifi\\" : "src/"
+    }
+  },
+  "suggest" : {
+    "los/loslog" : "los/loslog for logging",
+    "los/losui" : "los/losui for twitter bootstrap 3 styling, jquery, chosen and other libraries"
+  },
+  "type" : "library",
+  "license" : "BSD-3-Clause"
+}

@@ -128,18 +128,6 @@ class Device extends AbstractOptions
         return $this;
     }
 
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    public function setState($state)
-    {
-        $this->state = (bool) $state;
-
-        return $this;
-    }
-
     public function getSite()
     {
         return $this->site;
@@ -160,6 +148,11 @@ class Device extends AbstractOptions
     public function wentOnline()
     {
         return $this->statusChange === 1;
+    }
+
+    public function getState()
+    {
+        return $this->state;
     }
 
     public function setState($state)

@@ -16,7 +16,7 @@ final class ModuleOptions extends AbstractOptions
 
     private $site = 'default';
 
-    private $controller = '4.0.0';
+    private $version = '4.0.0';
 
     private $debug = false;
 
@@ -81,14 +81,14 @@ final class ModuleOptions extends AbstractOptions
         return $this;
     }
 
-    public function getController()
+    public function getVersion()
     {
-        return $this->controller;
+        return $this->version;
     }
 
-    public function setController($controller)
+    public function setVersion($version)
     {
-        $this->controller = (string) $controller;
+        $this->version = (string) $version;
 
         return $this;
     }

@@ -5,7 +5,7 @@ use Zend\Stdlib\AbstractOptions;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\MappedSuperClass
+ * @ORM\MappedSuperclass
  */
 class Sta extends AbstractOptions
 {

@@ -1,18 +1,18 @@
 <?php
-namespace LosUnifi;
+namespace LosWifi;
 
 return [
     'loswifi' => [
-        'backend' => 'unifi'
+        'controllers' => []
     ],
     'service_manager' => [
         'factories' => [
-            'LosUnifi\Options\ModuleOptions' => 'LosUnifi\Options\ModuleOptionsFactory',
-            'LosUnifi\Service\Client' => 'LosUnifi\Service\ClientFactory'
+            'LosWifi\Options\ModuleOptions' => 'LosWifi\Options\ModuleOptionsFactory',
+            'LosWifi\Service\Client' => 'LosWifi\Service\ClientFactory'
         ],
         'aliases' => [
-            'losunifi.options' => 'LosUnifi\Options\ModuleOptions',
-            'losunifi.client' => 'LosUnifi\Service\Client'
+            'loswifi.options' => 'LosWifi\Options\ModuleOptions',
+            'loswifi.client' => 'LosWifi\Service\Client'
         ]
     ],
     'doctrine' => [

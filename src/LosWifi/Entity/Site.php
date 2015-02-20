@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Zend\Stdlib\AbstractOptions;
 
 /**
- * @ORM\MappedSuperClass
+ * @ORM\MappedSuperclass
  */
 class Site extends AbstractOptions
 {
@@ -42,6 +42,12 @@ class Site extends AbstractOptions
      * @ORM\Column(type="string",length=64);
      */
     protected $role;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="LosWifi\Entity\Controller", inversedBy="sites")
+     * @ORM\JoinColumn(nullable=false, onDelete="RESTRICT")
+     */
+    protected $controller;
 
     public function getId()
     {
@@ -112,6 +118,17 @@ class Site extends AbstractOptions
     {
         $this->role = (string) $role;
 
+        return $this;
+    }
+
+    public function getController()
+    {
+        return $this->controller;
+    }
+
+    public function setController(Controller $controller)
+    {
+        $this->controller = $controller;
         return $this;
     }
 }

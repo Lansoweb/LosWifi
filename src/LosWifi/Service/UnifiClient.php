@@ -168,7 +168,7 @@ final class UnifiClient
         }
 
         $content = curl_exec($ch);
-        if ($this->debug == true) {
+        if ($this->debug === true) {
             echo "---------------------\n";
             echo "Url:  $url\n";
             echo "Data: $data\n";
@@ -208,7 +208,7 @@ final class UnifiClient
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if ($this->debug == true) {
+        if ($this->debug === true) {
             curl_setopt($ch, CURLOPT_VERBOSE, TRUE);
         }
         if ($this->cookies != "") {

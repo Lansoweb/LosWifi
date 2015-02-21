@@ -72,7 +72,7 @@ final class UnifiClient
         return $this->getData($content);
     }
 
-    public function getDevices($site = null)
+    private function getContent($site, $path)
     {
         if (! $this->loggedin) {
             throw new \RuntimeException("Not logged in.");
@@ -82,24 +82,19 @@ final class UnifiClient
             $site = $this->site;
         }
 
-        $content = $this->request($this->baseurl . "/api/s/$site/stat/device");
+        $content = $this->request($this->baseurl . "/api/s/$site/$path");
 
         return $this->getData($content);
     }
 
+    public function getDevices($site = null)
+    {
+        return $this->getContent($site, "stat/device");
+    }
+
     public function getSta($site = null)
     {
-        if (! $this->loggedin) {
-            throw new \RuntimeException("Not logged in.");
-        }
-
-        if ($site === null) {
-            $site = $this->site;
-        }
-
-        $content = $this->request($this->baseurl . "/api/s/$site/stat/sta");
-
-        return $this->getData($content);
+        return $this->getContent($site, "stat/sta");
     }
 
     public function login()
@@ -218,59 +213,40 @@ final class UnifiClient
         return $ch;
     }
 
-    public function authorizeGuest($mac, $minutes)
+    private function handleMac($mac, $params)
     {
         $mac = strtolower($mac);
         if (! $this->loggedin) {
             return false;
         }
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", "{'cmd':'authorize-guest', 'mac':'" . $mac . "', 'minutes':" . $minutes . "}");
+        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", $params);
 
         return $this->isRequestOk($content);
+    }
+
+    public function authorizeGuest($mac, $minutes)
+    {
+        return $this->handleMac($mac, "{'cmd':'authorize-guest', 'mac':'" . $mac . "', 'minutes':" . $minutes . "}");
     }
 
     public function unauthorizeGuest($mac)
     {
-        $mac = strtolower($mac);
-        if (! $this->loggedin) {
-            return false;
-        }
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", "{'cmd':'unauthorize-guest', 'mac':'" . $mac . "'}");
-
-        return $this->isRequestOk($content);
+        return $this->handleMac($mac, "{'cmd':'unauthorize-guest', 'mac':'" . $mac . "'}");
     }
 
     public function reconnectSta($mac)
     {
-        $mac = strtolower($mac);
-        if (! $this->loggedin) {
-            return false;
-        }
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", "{'cmd':'kick-sta', 'mac':'" . $mac . "'}");
-
-        return $this->isRequestOk($content);
+        return $this->handleMac($mac, "{'cmd':'kick-sta', 'mac':'" . $mac . "'}");
     }
 
     public function blockSta($mac)
     {
-        if (! $this->loggedin) {
-            return false;
-        }
-        $mac = strtolower($mac);
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", "{'cmd':'block-sta', 'mac':'" . $mac . "'}");
-
-        return $this->isRequestOk($content);
+        return $this->handleMac($mac, "{'cmd':'block-sta', 'mac':'" . $mac . "'}");
     }
 
     public function unblockSta($mac)
     {
-        if (! $this->loggedin) {
-            return false;
-        }
-        $mac = strtolower($mac);
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", "{'cmd':'unblock-sta', 'mac':'" . $mac . "'}");
-
-        return $this->isRequestOk($content);
+        return $this->handleMac($mac, "{'cmd':'unblock-sta', 'mac':'" . $mac . "'}");
     }
 
     public function listGuests()
@@ -318,9 +294,9 @@ final class UnifiClient
         $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/hotspot", "{" . $json . "}");
         $data = $this->getData($content);
         if ($data !== false) {
-            $obj = $content_decoded->data[0];
+            $obj = $content->data[0];
             $list = [];
-            foreach ($this->get_vouchers($obj->create_time) as $voucher) {
+            foreach ($this->getVouchers($obj->create_time) as $voucher) {
                 $list[] = $voucher->code;
             }
 

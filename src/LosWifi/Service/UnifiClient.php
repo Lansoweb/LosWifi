@@ -215,38 +215,39 @@ final class UnifiClient
 
     private function handleMac($mac, $params)
     {
-        $mac = strtolower($mac);
         if (! $this->loggedin) {
             return false;
         }
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", $params);
+        $params['mac'] = strtolower($mac);
+
+        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", json_encode($params));
 
         return $this->isRequestOk($content);
     }
 
     public function authorizeGuest($mac, $minutes)
     {
-        return $this->handleMac($mac, "{'cmd':'authorize-guest', 'mac':'" . $mac . "', 'minutes':" . $minutes . "}");
+        return $this->handleMac($mac, ['cmd' => 'authorize-guest', 'minutes' => $minutes]);
     }
 
     public function unauthorizeGuest($mac)
     {
-        return $this->handleMac($mac, "{'cmd':'unauthorize-guest', 'mac':'" . $mac . "'}");
+        return $this->handleMac($mac, ['cmd' => 'unauthorize-guest']);
     }
 
     public function reconnectSta($mac)
     {
-        return $this->handleMac($mac, "{'cmd':'kick-sta', 'mac':'" . $mac . "'}");
+        return $this->handleMac($mac, ['cmd' => 'kick-sta']);
     }
 
     public function blockSta($mac)
     {
-        return $this->handleMac($mac, "{'cmd':'block-sta', 'mac':'" . $mac . "'}");
+        return $this->handleMac($mac, ['cmd' => 'block-sta']);
     }
 
     public function unblockSta($mac)
     {
-        return $this->handleMac($mac, "{'cmd':'unblock-sta', 'mac':'" . $mac . "'}");
+        return $this->handleMac($mac, ['cmd' => 'unblock-sta']);
     }
 
     public function listGuests()

@@ -64,6 +64,11 @@ class Sta extends AbstractOptions
     protected $signal;
 
     /**
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    protected $noise;
+
+    /**
      * @ORM\Column(type="integer", nullable=true, options={"unsigned":true}, name="rx_bytes")
      */
     protected $rxBytes;
@@ -196,6 +201,17 @@ class Sta extends AbstractOptions
     {
         $this->signal = $signal;
 
+        return $this;
+    }
+
+    public function getNoise()
+    {
+        return $this->noise;
+    }
+
+    public function setNoise($noise)
+    {
+        $this->noise = $noise;
         return $this;
     }
 

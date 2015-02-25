@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Zend\Stdlib\AbstractOptions;
 
 /**
- * @ORM\MappedSuperClass
+ * @ORM\MappedSuperclass
  */
 class Controller extends AbstractOptions
 {

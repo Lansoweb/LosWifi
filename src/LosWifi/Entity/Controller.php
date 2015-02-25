@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Zend\Stdlib\AbstractOptions;
 
 /**
- * @ORM\MappedSuperclass
+ * @ORM\MappedSuperClass
  */
 class Controller extends AbstractOptions
 {
@@ -18,6 +18,11 @@ class Controller extends AbstractOptions
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\Column(type="string");
+     */
+    protected $backend = 'unifi';
 
     /**
      * @ORM\Column(type="string");
@@ -35,7 +40,7 @@ class Controller extends AbstractOptions
     protected $password = '';
 
     /**
-     * @ORM\Column(type="string");
+     * @ORM\Column(type="string",name="base_url");
      */
     protected $baseUrl = 'https://127.0.0.1:8443';
 
@@ -43,11 +48,6 @@ class Controller extends AbstractOptions
      * @ORM\Column(type="string",length=10);
      */
     protected $version = '4.0.0';
-
-    /**
-     * @ORM\OneToMany(targetEntity="LosWifi\Entity\Site", mappedBy="controller")
-     */
-    protected $sites;
 
     public function getId()
     {
@@ -58,6 +58,19 @@ class Controller extends AbstractOptions
     {
         $this->id = $id;
         return $this;
+    }
+
+    public function getBackend()
+    {
+        return $this->backend;
+    }
+
+    public function setBackend($backend)
+    {
+        if ($backend !== 'unifi') {
+            throw new \InvalidArgumentException("Invalid type '$backend' specified. Must be 'unifi'.");
+        }
+        $this->backend = $backend;
     }
 
     public function getSlug()
@@ -112,17 +125,6 @@ class Controller extends AbstractOptions
     public function setVersion($version)
     {
         $this->version = $version;
-        return $this;
-    }
-
-    public function getSites()
-    {
-        return $this->sites;
-    }
-
-    public function setSites($sites)
-    {
-        $this->sites = $sites;
         return $this;
     }
 }

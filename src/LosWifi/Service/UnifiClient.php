@@ -1,16 +1,12 @@
 <?php
 namespace LosWifi\Service;
 
+use LosWifi\Entity\Controller;
+
 final class UnifiClient
 {
 
-    private $username;
-
-    private $password;
-
     private $site;
-
-    private $baseurl;
 
     private $controller;
 
@@ -20,16 +16,9 @@ final class UnifiClient
 
     private $debug;
 
-    public function __construct($username, $password, $baseurl = "https://127.0.0.1:8443", $site = "default", $controller = "4.0.0", $debug = false)
+    public function __construct(Controller $controller, $site = "default", $debug = false)
     {
-        $this->username = $username;
-        $this->password = $password;
-        $this->baseurl = $baseurl;
         $this->site = $site;
-        if (strpos($controller, ".") !== false) {
-            $controller = explode('.', $controller);
-            $controller = $controller[0];
-        }
         $this->controller = $controller;
         $this->debug = $debug;
     }
@@ -63,10 +52,10 @@ final class UnifiClient
         if (! $this->loggedin) {
             throw new \RuntimeException("Not logged in.");
         }
-        if ($this->controller >= 4) {
-            $content = $this->request($this->baseurl . "/api/self/sites");
+        if (version_compare($this->controller->getVersion(), 4) >= 0) {
+            $content = $this->request($this->controller->getBaseUrl(). "/api/self/sites");
         } else {
-            $content = $this->request($this->baseurl . "/api/s/default/cmd/sitemgr",'json={"cmd":"get-sites"}');
+            $content = $this->request($this->controller->getBaseUrl() . "/api/s/default/cmd/sitemgr",'json={"cmd":"get-sites"}');
         }
 
         return $this->getData($content);
@@ -82,7 +71,7 @@ final class UnifiClient
             $site = $this->site;
         }
 
-        $content = $this->request($this->baseurl . "/api/s/$site/$path");
+        $content = $this->request($this->controller->getBaseUrl() . "/api/s/$site/$path");
 
         return $this->getData($content);
     }
@@ -102,18 +91,18 @@ final class UnifiClient
         $this->cookies = "";
         $ch = $this->createCurl();
         curl_setopt($ch, CURLOPT_HEADER, 1);
-        if ($this->controller >= 4) {
+        if (version_compare($this->controller->getVersion(), 4) >= 0) {
             // Controller 4
-            curl_setopt($ch, CURLOPT_REFERER, $this->baseurl . "/login");
-            curl_setopt($ch, CURLOPT_URL, $this->baseurl . "/api/login");
+            curl_setopt($ch, CURLOPT_REFERER, $this->controller->getBaseUrl() . "/login");
+            curl_setopt($ch, CURLOPT_URL, $this->controller->getBaseUrl() . "/api/login");
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-                "username" => $this->username,
-                "password" => $this->password
+                "username" => $this->controller->getUsername(),
+                "password" => $this->controller->getPassword()
             ]));
         } else {
             // Controller 3
-            curl_setopt($ch, CURLOPT_URL, $this->baseurl . "/login");
-            curl_setopt($ch, CURLOPT_POSTFIELDS, "login=login&username=" . $this->username . "&password=" . $this->password);
+            curl_setopt($ch, CURLOPT_URL, $this->controller->getBaseUrl() . "/login");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, "login=login&username=" . $this->controller->getUsername() . "&password=" . $this->controller->getPassword());
         }
         $content = curl_exec($ch);
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -140,7 +129,7 @@ final class UnifiClient
         if (! $this->loggedin) {
             return;
         }
-        $this->request($this->baseurl . "/logout");
+        $this->request($this->controller->getBaseUrl() . "/logout");
         $this->loggedin = false;
         $this->cookies = "";
     }
@@ -220,7 +209,7 @@ final class UnifiClient
         }
         $params['mac'] = strtolower($mac);
 
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/stamgr", json_encode($params));
+        $content = $this->request($this->controller->getBaseUrl() . "/api/s/" . $this->site . "/cmd/stamgr", json_encode($params));
 
         return $this->isRequestOk($content);
     }
@@ -255,7 +244,7 @@ final class UnifiClient
         if (! $this->loggedin) {
             return false;
         }
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/stat/guest");
+        $content = $this->request($this->controller->getBaseUrl() . "/api/s/" . $this->site . "/stat/guest");
 
         return $this->getData($content);
     }
@@ -269,7 +258,7 @@ final class UnifiClient
         if (trim($create_time) != "") {
             $json .= "'create_time':" . $create_time . "";
         }
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/stat/voucher", "{" . $json . "}");
+        $content = $this->request($this->controller->getBaseUrl() . "/api/s/" . $this->site . "/stat/voucher", "{" . $json . "}");
 
         return $this->getData($content);
     }
@@ -292,7 +281,7 @@ final class UnifiClient
         if ($Mbytes > 0) {
             $json .= ", 'bytes':" . $Mbytes . "";
         }
-        $content = $this->request($this->baseurl . "/api/s/" . $this->site . "/cmd/hotspot", "{" . $json . "}");
+        $content = $this->request($this->controller->getBaseUrl() . "/api/s/" . $this->site . "/cmd/hotspot", "{" . $json . "}");
         $data = $this->getData($content);
         if ($data !== false) {
             $obj = $content->data[0];

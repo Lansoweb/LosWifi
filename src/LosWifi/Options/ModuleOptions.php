@@ -6,92 +6,9 @@ use Zend\Stdlib\AbstractOptions;
 final class ModuleOptions extends AbstractOptions
 {
 
-    private $backend = 'unifi';
-
-    private $username = '';
-
-    private $password = '';
-
-    private $baseUrl = 'https://127.0.0.1:8443';
-
-    private $site = 'default';
-
-    private $version = '4.0.0';
-
     private $debug = false;
 
-    public function getBackend()
-    {
-        return $this->backend;
-    }
-
-    public function setBackend($backend)
-    {
-        if ($backend !== 'unifi') {
-            throw new \InvalidArgumentException("Invalid type '$backend' specified. Must be 'unifi'.");
-        }
-        $this->backend = $backend;
-    }
-
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    public function setUsername($username)
-    {
-        $this->username = (string) $username;
-
-        return $this;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    public function setPassword($password)
-    {
-        $this->password = (string) $password;
-
-        return $this;
-    }
-
-    public function getBaseUrl()
-    {
-        return $this->baseUrl;
-    }
-
-    public function setBaseUrl($baseUrl)
-    {
-        $this->baseUrl = (string) $baseUrl;
-
-        return $this;
-    }
-
-    public function getSite()
-    {
-        return $this->site;
-    }
-
-    public function setSite($site)
-    {
-        $this->site = (string) $site;
-
-        return $this;
-    }
-
-    public function getVersion()
-    {
-        return $this->version;
-    }
-
-    public function setVersion($version)
-    {
-        $this->version = (string) $version;
-
-        return $this;
-    }
+    private $controllers = [];
 
     public function getDebug()
     {
@@ -103,5 +20,26 @@ final class ModuleOptions extends AbstractOptions
         $this->debug = (bool) $debug;
 
         return $this;
+    }
+
+    public function getControllers()
+    {
+        return $this->controllers;
+    }
+
+    public function setControllers($controllers)
+    {
+        $this->controllers = $controllers;
+        return $this;
+    }
+
+    public function getController($slug)
+    {
+        foreach ($this->controllers as $controller) {
+            if (array_key_exists('slug', $controller) && $controller['slug'] == $slug) {
+                return $controller;
+            }
+        }
+        return false;
     }
 }

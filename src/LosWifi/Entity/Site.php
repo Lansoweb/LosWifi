@@ -29,12 +29,12 @@ class Site extends AbstractOptions
     protected $name;
 
     /**
-     * @ORM\Column(type="smallint", options={"unsigned":true});
+     * @ORM\Column(type="smallint", options={"unsigned":true}, name="num_ap");
      */
     protected $numAp;
 
     /**
-     * @ORM\Column(type="smallint", options={"unsigned":true});
+     * @ORM\Column(type="smallint", options={"unsigned":true}, name="num_sta");
      */
     protected $numSta;
 

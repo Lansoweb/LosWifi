@@ -8,11 +8,9 @@ return [
     'service_manager' => [
         'factories' => [
             'LosWifi\Options\ModuleOptions' => 'LosWifi\Options\ModuleOptionsFactory',
-            'LosWifi\Service\Client' => 'LosWifi\Service\ClientFactory'
         ],
         'aliases' => [
             'loswifi.options' => 'LosWifi\Options\ModuleOptions',
-            'loswifi.client' => 'LosWifi\Service\Client'
         ]
     ],
     'doctrine' => [

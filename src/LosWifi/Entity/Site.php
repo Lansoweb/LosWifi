@@ -126,7 +126,7 @@ class Site extends AbstractOptions
         return $this->controller;
     }
 
-    public function setController(Controller $controller)
+    public function setController($controller)
     {
         $this->controller = $controller;
         return $this;
